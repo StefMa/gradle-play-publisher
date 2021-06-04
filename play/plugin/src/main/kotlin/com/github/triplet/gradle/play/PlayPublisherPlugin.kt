@@ -137,12 +137,12 @@ internal class PlayPublisherPlugin : Plugin<Project> {
                 """.trimMargin(),
                 arrayOf(cliOptionsExtension, executionDir)
         )
-        val publishProductsAllTask = project.newTask(
+        val publishProductsAllTask = project.newTask<Task>(
                 "publishProducts",
                 """
                 |Uploads all Play Store in-app products for every variant.
                 |   See https://github.com/Triple-T/gradle-play-publisher#publishing-in-app-products
-                """.trimMargin()
+                """.trimMargin(),
         )
 
         val baseExtension = project.extensions.getByType<PlayPublisherExtension>()
@@ -165,6 +165,12 @@ internal class PlayPublisherPlugin : Plugin<Project> {
                 project.logger.debug(
                         "Extension resolved for variant '${variant.name}': ${extension.toConfig()}")
             }
+
+            // TODO remove before submit
+            println(variant.flavorName)
+            println(variant.buildType)
+            println(variant.productFlavors.map { it.second })
+            println()
 
             if (!extension.enabled.get()) {
                 project.logger.info(

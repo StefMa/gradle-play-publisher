@@ -21,16 +21,11 @@ internal val ApplicationVariant.flavorNameOrDefault
 
 internal val ApplicationVariant.playPath get() = "$RESOURCES_OUTPUT_PATH/$name/$PLAY_PATH"
 
-internal fun Project.newTask(
-        name: String,
-        description: String? = null,
-        block: Task.() -> Unit = {},
-) = newTask(name, description, emptyArray(), block)
-
 internal inline fun <reified T : Task> Project.newTask(
         name: String,
         description: String? = null,
         constructorArgs: Array<Any> = emptyArray(),
+        allowExisting: Boolean = false,
         noinline block: T.() -> Unit = {},
 ): TaskProvider<T> {
     val config: T.() -> Unit = {
@@ -39,7 +34,16 @@ internal inline fun <reified T : Task> Project.newTask(
         block()
     }
 
-    return tasks.register<T>(name, *constructorArgs).apply { configure(config) }
+    return try {
+        tasks.register<T>(name, *constructorArgs).apply { configure(config) }
+    } catch (e: InvalidUserDataException) {
+        if (allowExisting) {
+            @Suppress("UNCHECKED_CAST")
+            tasks.named(name) as TaskProvider<T>
+        } else {
+            throw e
+        }
+    }
 }
 
 internal fun Project.getCommitEditTask(
@@ -48,15 +52,8 @@ internal fun Project.getCommitEditTask(
         api: Provider<PlayApiService>,
 ): TaskProvider<CommitEdit> {
     val taskName = "commitEditFor" + appId.split(".").joinToString("Dot") { it.capitalize() }
-    return try {
-        rootProject.tasks.register<CommitEdit>(taskName, extension).apply {
-            configure {
-                apiService.set(api)
-            }
-        }
-    } catch (e: InvalidUserDataException) {
-        @Suppress("UNCHECKED_CAST")
-        rootProject.tasks.named(taskName) as TaskProvider<CommitEdit>
+    return rootProject.newTask(taskName, allowExisting = true, constructorArgs = arrayOf(extension)) {
+        apiService.set(api)
     }
 }
 

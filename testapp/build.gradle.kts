@@ -106,6 +106,21 @@ configure<BaseAppModuleExtension> {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
+    // TODO remove before submit
+    flavorDimensions.addAll(listOf("a", "b"))
+    productFlavors {
+        register("special") {
+            dimension = "a"
+        }
+        register("booz") {
+            dimension = "a"
+        }
+
+        register("first") {
+            dimension = "b"
+        }
+    }
 }
 
 configure<PlayPublisherExtension> {
