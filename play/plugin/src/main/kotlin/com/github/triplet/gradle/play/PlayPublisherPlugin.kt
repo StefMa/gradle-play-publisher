@@ -1,7 +1,7 @@
 package com.github.triplet.gradle.play
 
 import com.android.build.api.artifact.SingleArtifact
-import com.android.build.api.extension.ApplicationAndroidComponentsExtension
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.gradle.AppPlugin
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
 import com.github.triplet.gradle.androidpublisher.ResolutionStrategy
