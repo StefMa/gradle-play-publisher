@@ -24,7 +24,7 @@ jobs:
       - name: Setup environment
         id: setup
         run: |
-          if grep -qi "snapshot" versions.txt; then is_snapshot=true; else is_snapshot=false; fi
+          if grep -qi "snapshot" version.txt; then is_snapshot=true; else is_snapshot=false; fi
           echo "is_snapshot=$is_snapshot" >> "$GITHUB_OUTPUT"
           echo $is_snapshot
 
